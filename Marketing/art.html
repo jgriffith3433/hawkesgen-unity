@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body { background: #f4f2ed; color: #1a1915; font-family: 'IBM Plex Sans', sans-serif; }
+  .serif { font-family: 'Instrument Serif', serif; font-weight: 400; letter-spacing: -0.02em; }
+  .mono { font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; color: #8b867b; }
+  .checker { background: repeating-conic-gradient(#e9e6df 0 25%, #f4f2ed 0 50%) 0 0 / 18px 18px; }
+  img { display: block; }
+  .pix { image-rendering: pixelated; }
+  [data-v] { display: none; width: 100%; height: 100%; }
+  [data-v].on { display: block; }
+  .arrow { font-family: 'Instrument Serif', serif; color: #8b867b; }
+  .chip { display: inline-block; border: 1px solid #b9b3a6; padding: 6px 12px; border-radius: 3px; font: 500 18px 'IBM Plex Mono', monospace; color: #4b4840; }
+</style>
+</head>
+<body>
+<!-- icon 160x160 -->
+<div data-v="icon" style="position:relative">
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+    <img src="img/knight.webp" style="width:96px;height:96px;object-fit:contain">
+    <div class="serif" style="font-size:26px;line-height:1;margin-top:4px">Hawkes Gen</div>
+  </div>
+</div>
+
+<!-- card 420x280 -->
+<div data-v="card" style="padding:26px 28px;position:relative">
+  <div class="mono" style="font-size:11px">Unity editor tool</div>
+  <div class="serif" style="font-size:44px;line-height:0.95;margin-top:10px">Hawkes Gen</div>
+  <div style="font-size:14px;color:#4b4840;margin-top:8px;max-width:190px">Sprite sheets, sprites, materials and sound from a prompt.</div>
+  <img src="img/walk-sheet.webp" class="checker" style="position:absolute;right:22px;bottom:24px;width:190px;border:1px solid #d6d1c6">
+</div>
+
+<!-- cover 1200x630 -->
+<div data-v="cover"><div style="height:100%;padding:70px 80px;display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center">
+  <div>
+    <div class="mono" style="font-size:16px">Hawkes Gen for Unity</div>
+    <div class="serif" style="font-size:96px;line-height:0.95;margin-top:20px">Game assets,<br><i style="color:#4b4840">inside Unity.</i></div>
+    <div style="font-size:22px;color:#4b4840;margin-top:24px;line-height:1.45">Animated sprite sheets, sliced with an AnimationClip. Sprites, edits, pixel art, PBR materials, skyboxes, sound, voice and music.</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:22px">
+    <img src="img/knight.webp" class="checker" style="width:180px;border:1px solid #d6d1c6">
+    <span class="arrow" style="font-size:52px">→</span>
+    <img src="img/walk-sheet.webp" class="checker" style="width:320px;border:1px solid #d6d1c6">
+  </div>
+</div></div>
+
+<!-- screenshot 1: sprite sheet 1920x1080 -->
+<div data-v="shot1" style="padding:90px 110px">
+  <div class="mono" style="font-size:20px">1 · Animated sprite sheet</div>
+  <div class="serif" style="font-size:84px;line-height:1;margin:18px 0 12px">A character in, a walk cycle out.</div>
+  <div style="font-size:26px;color:#4b4840;max-width:1300px">Pick an image, describe the motion. It's cut out, animated, keyed to transparency, and imported <b>sliced into Sprites with a looping AnimationClip</b>.</div>
+  <div style="display:flex;align-items:center;gap:40px;margin-top:60px">
+    <img src="img/knight.webp" class="checker" style="width:360px;border:1px solid #d6d1c6">
+    <span class="arrow" style="font-size:90px">→</span>
+    <div>
+      <img src="img/walk-sheet.webp" class="checker" style="width:900px;border:1px solid #d6d1c6">
+      <div style="margin-top:18px;display:flex;gap:10px"><span class="chip">walk.png · 8 Sprites</span><span class="chip">walk.anim · loops</span><span class="chip">~50 credits</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- screenshot 2: editing 1920x1080 -->
+<div data-v="shot2" style="padding:90px 110px">
+  <div class="mono" style="font-size:20px">2 · Edit what you have</div>
+  <div class="serif" style="font-size:84px;line-height:1;margin:18px 0 12px">Change it with words.</div>
+  <div style="font-size:26px;color:#4b4840;max-width:1300px">Edits, variations that stay on-model, background removal, and pixel art with a palette and outline.</div>
+  <div style="display:flex;align-items:flex-end;gap:34px;margin-top:56px">
+    <div><img src="img/edit.webp" class="checker" style="width:360px;border:1px solid #d6d1c6"><div class="chip" style="margin-top:14px">"golden sword, red plume"</div></div>
+    <div style="display:flex;gap:14px"><img src="img/var1.webp" style="width:240px;border:1px solid #d6d1c6"><img src="img/var2.webp" style="width:240px;border:1px solid #d6d1c6"><img src="img/var3.webp" style="width:240px;border:1px solid #d6d1c6"></div>
+    <div><img src="img/pixel.png" class="pix checker" style="width:300px;border:1px solid #d6d1c6"><div class="chip" style="margin-top:14px">pixel art · 2 credits</div></div>
+  </div>
+</div>
+
+<!-- screenshot 3: materials 1920x1080 -->
+<div data-v="shot3" style="padding:90px 110px">
+  <div class="mono" style="font-size:20px">3 · Materials, skyboxes and sound</div>
+  <div class="serif" style="font-size:84px;line-height:1;margin:18px 0 12px">Ready-to-use Unity assets.</div>
+  <div style="font-size:26px;color:#4b4840;max-width:1300px">Tileable textures arrive with normal and roughness maps, set up as a Material for Built-in, URP or HDRP. Panoramas become skyboxes; sounds, voices and music become AudioClips.</div>
+  <div style="display:flex;gap:26px;margin-top:56px">
+    <div><img src="img/tex-albedo.webp" style="width:400px;border:1px solid #d6d1c6"><div class="chip" style="margin-top:14px">albedo</div></div>
+    <div><img src="img/tex-normal.webp" style="width:400px;border:1px solid #d6d1c6"><div class="chip" style="margin-top:14px">normal</div></div>
+    <div><img src="img/tex-roughness.webp" style="width:400px;border:1px solid #d6d1c6"><div class="chip" style="margin-top:14px">roughness</div></div>
+    <div style="align-self:center;font-size:24px;color:#4b4840;max-width:300px">"mossy cobblestone"<br><span class="mono" style="font-size:16px">→ cobblestone.mat · ~10 credits</span></div>
+  </div>
+</div>
+<script>
+  // #view or #view:zoom (small images are drawn bigger, then scaled down).
+  const [v, zoom] = (location.hash.slice(1) || 'cover').split(':');
+  document.querySelector(`[data-v="${v}"]`).classList.add('on');
+  if (zoom) { document.body.style.zoom = zoom; }
+</script>
+</body>
+</html>
