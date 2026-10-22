@@ -56,8 +56,8 @@ namespace HawkesGen.Editor
     /// <summary>Calls to Hawkes Gen. Every method is async and safe to await from editor code.</summary>
     public static class HawkesGenClient
     {
-        static readonly HttpClient Http = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
-        static int _rpcId;
+        // No static state (safe with Enter Play Mode Options / domain reload off): a client per call.
+        static HttpClient NewHttp() => new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
 
         // ------------------------------------------------------------------ sign-in
 
@@ -159,7 +159,7 @@ namespace HawkesGen.Editor
         {
             var request = new Dictionary<string, object>
             {
-                { "jsonrpc", "2.0" }, { "id", Interlocked.Increment(ref _rpcId) }, { "method", "tools/call" },
+                { "jsonrpc", "2.0" }, { "id", Guid.NewGuid().ToString("N") }, { "method", "tools/call" },
                 { "params", new Dictionary<string, object> { { "name", tool }, { "arguments", args ?? new Dictionary<string, object>() } } },
             };
             var answer = await SendJsonAsync(HttpMethod.Post, HawkesGenSettings.Server + "/mcp", request, auth: true);
@@ -196,8 +196,9 @@ namespace HawkesGen.Editor
             var link = Json.Obj(await CallToolAsync("upload_file", new Dictionary<string, object> { { "filename", Path.GetFileName(path) } }), "upload");
             string url = Json.Str(link, "url");
             if (string.IsNullOrEmpty(url)) throw new HawkesGenException("The server didn't give an upload link.");
+            using (var http = NewHttp())
             using (var content = new ByteArrayContent(File.ReadAllBytes(path)))
-            using (var r = await Http.PutAsync(url, content))
+            using (var r = await http.PutAsync(url, content))
             {
                 string text = await r.Content.ReadAsStringAsync();
                 if (!r.IsSuccessStatusCode) throw new HawkesGenException($"Upload failed: {Json.Str(SafeParse(text), "error", r.ReasonPhrase)}");
@@ -208,7 +209,8 @@ namespace HawkesGen.Editor
         /// <summary>Saves a result's download link to a file.</summary>
         public static async Task DownloadAsync(string url, string path)
         {
-            using (var r = await Http.GetAsync(url))
+            using (var http = NewHttp())
+            using (var r = await http.GetAsync(url))
             {
                 if (!r.IsSuccessStatusCode) throw new HawkesGenException($"Download failed ({(int)r.StatusCode}).");
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
@@ -232,7 +234,8 @@ namespace HawkesGen.Editor
                         if (string.IsNullOrEmpty(HawkesGenSettings.AccessToken) && !await RefreshAsync()) throw new HawkesGenException("Sign in to Hawkes Gen first.");
                         req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HawkesGenSettings.AccessToken);
                     }
-                    using (var r = await Http.SendAsync(req))
+                    using (var http = NewHttp())
+                    using (var r = await http.SendAsync(req))
                     {
                         string text = await r.Content.ReadAsStringAsync();
                         if (auth && r.StatusCode == HttpStatusCode.Unauthorized && attempt == 0)
@@ -252,8 +255,9 @@ namespace HawkesGen.Editor
 
         static async Task<object> PostFormAsync(string url, Dictionary<string, string> form)
         {
+            using (var http = NewHttp())
             using (var content = new FormUrlEncodedContent(form))
-            using (var r = await Http.PostAsync(url, content))
+            using (var r = await http.PostAsync(url, content))
             {
                 var parsed = SafeParse(await r.Content.ReadAsStringAsync());
                 if (!r.IsSuccessStatusCode) throw new HawkesGenException(Json.Str(parsed, "error_description", "The server refused the sign-in."));

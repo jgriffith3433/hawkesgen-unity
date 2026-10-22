@@ -13,9 +13,9 @@ namespace HawkesGen.Editor
     public class HawkesGenWindow : EditorWindow
     {
         enum Recipe { Sprite, SpriteSheet, EditImage, RemoveBackground, PixelArt, Material, Skybox, SoundEffect, VoiceLine, Music }
-        static readonly string[] RecipeNames = { "Sprite or image", "Animated sprite sheet", "Edit an image", "Remove background", "Pixel art", "Tileable material", "Skybox", "Sound effect", "Voice line", "Music" };
-        static readonly string[] RecipeCosts = { "about 5 credits (+2 transparent)", "about 50 credits", "about 5 credits", "2 credits", "2 credits", "about 10 credits", "about 5 credits", "about 8 credits", "about 10 credits", "about 20 credits" };
-        static readonly string[] Aspects = { "1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3" };
+        readonly string[] RecipeNames = { "Sprite or image", "Animated sprite sheet", "Edit an image", "Remove background", "Pixel art", "Tileable material", "Skybox", "Sound effect", "Voice line", "Music" };
+        readonly string[] RecipeCosts = { "about 5 credits (+2 transparent)", "about 50 credits", "about 5 credits", "2 credits", "2 credits", "about 10 credits", "about 5 credits", "about 8 credits", "about 10 credits", "about 20 credits" };
+        readonly string[] Aspects = { "1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3" };
 
         class Job
         {
