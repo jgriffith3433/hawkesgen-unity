@@ -19,32 +19,29 @@ namespace HawkesGen.Editor
     /// <summary>Where Hawkes Gen is, and this computer's sign-in.</summary>
     public static class HawkesGenSettings
     {
-        const string Prefix = "HawkesGen.";
-        public const string DefaultServer = "https://hawkesgen.com";
+        // Methods over EditorPrefs, no static fields or properties: nothing is kept between Play mode sessions.
+        static string Key(string name) => "HawkesGen." + name;
 
-        public static string Server
-        {
-            get => EditorPrefs.GetString(Prefix + "Server", DefaultServer).TrimEnd('/');
-            set => EditorPrefs.SetString(Prefix + "Server", value);
-        }
+        public static string GetServer() => EditorPrefs.GetString(Key("Server"), "https://hawkesgen.com").TrimEnd('/');
+        public static void SetServer(string value) => EditorPrefs.SetString(Key("Server"), value);
 
-        public static string AccessToken { get => EditorPrefs.GetString(Prefix + "Access", ""); set => EditorPrefs.SetString(Prefix + "Access", value); }
-        public static string RefreshToken { get => EditorPrefs.GetString(Prefix + "Refresh", ""); set => EditorPrefs.SetString(Prefix + "Refresh", value); }
-        public static string ClientId { get => EditorPrefs.GetString(Prefix + "ClientId." + Server, ""); set => EditorPrefs.SetString(Prefix + "ClientId." + Server, value); }
+        public static string GetAccessToken() => EditorPrefs.GetString(Key("Access"), "");
+        public static void SetAccessToken(string value) => EditorPrefs.SetString(Key("Access"), value);
+        public static string GetRefreshToken() => EditorPrefs.GetString(Key("Refresh"), "");
+        public static void SetRefreshToken(string value) => EditorPrefs.SetString(Key("Refresh"), value);
+        public static string GetClientId() => EditorPrefs.GetString(Key("ClientId." + GetServer()), "");
+        public static void SetClientId(string value) => EditorPrefs.SetString(Key("ClientId." + GetServer()), value);
 
         /// <summary>The folder (per project) results are saved into.</summary>
-        public static string OutputFolder
-        {
-            get => EditorPrefs.GetString(Prefix + "Output." + Application.dataPath, "Assets/Hawkes Gen Output");
-            set => EditorPrefs.SetString(Prefix + "Output." + Application.dataPath, value);
-        }
+        public static string GetOutputFolder() => EditorPrefs.GetString(Key("Output." + Application.dataPath), "Assets/Hawkes Gen Output");
+        public static void SetOutputFolder(string value) => EditorPrefs.SetString(Key("Output." + Application.dataPath), value);
 
-        public static bool SignedIn => !string.IsNullOrEmpty(RefreshToken) || !string.IsNullOrEmpty(AccessToken);
+        public static bool IsSignedIn() => !string.IsNullOrEmpty(GetRefreshToken()) || !string.IsNullOrEmpty(GetAccessToken());
 
         public static void SignOut()
         {
-            AccessToken = "";
-            RefreshToken = "";
+            SetAccessToken("");
+            SetRefreshToken("");
         }
     }
 
@@ -65,7 +62,7 @@ namespace HawkesGen.Editor
         /// openUrl replaces the browser (automated tests).</summary>
         public static async Task SignInAsync(Action<string> openUrl = null, CancellationToken cancel = default)
         {
-            string server = HawkesGenSettings.Server;
+            string server = HawkesGenSettings.GetServer();
             var listener = new TcpListener(IPAddress.Loopback, 0);
             listener.Start();
             try
@@ -116,7 +113,7 @@ namespace HawkesGen.Editor
         /// <summary>This editor registered with the server once (dynamic client registration).</summary>
         static async Task<string> EnsureClientAsync(string server)
         {
-            if (!string.IsNullOrEmpty(HawkesGenSettings.ClientId)) return HawkesGenSettings.ClientId;
+            if (!string.IsNullOrEmpty(HawkesGenSettings.GetClientId())) return HawkesGenSettings.GetClientId();
             var reg = await SendJsonAsync(HttpMethod.Post, server + "/oauth/register", new Dictionary<string, object>
             {
                 { "client_name", "Unity Editor" }, { "redirect_uris", new List<object> { "http://127.0.0.1/callback" } },
@@ -124,7 +121,7 @@ namespace HawkesGen.Editor
             }, auth: false);
             string id = Json.Str(reg, "client_id");
             if (string.IsNullOrEmpty(id)) throw new HawkesGenException("The server didn't register this editor.");
-            HawkesGenSettings.ClientId = id;
+            HawkesGenSettings.SetClientId(id);
             return id;
         }
 
@@ -132,16 +129,16 @@ namespace HawkesGen.Editor
         {
             string access = Json.Str(tokens, "access_token");
             if (string.IsNullOrEmpty(access)) throw new HawkesGenException(Json.Str(tokens, "error_description", "Sign-in failed."));
-            HawkesGenSettings.AccessToken = access;
-            HawkesGenSettings.RefreshToken = Json.Str(tokens, "refresh_token", HawkesGenSettings.RefreshToken);
+            HawkesGenSettings.SetAccessToken(access);
+            HawkesGenSettings.SetRefreshToken(Json.Str(tokens, "refresh_token", HawkesGenSettings.GetRefreshToken()));
         }
 
         static async Task<bool> RefreshAsync()
         {
-            if (string.IsNullOrEmpty(HawkesGenSettings.RefreshToken)) return false;
+            if (string.IsNullOrEmpty(HawkesGenSettings.GetRefreshToken())) return false;
             try
             {
-                var tokens = await PostFormAsync(HawkesGenSettings.Server + "/oauth/token", new Dictionary<string, string> { { "grant_type", "refresh_token" }, { "refresh_token", HawkesGenSettings.RefreshToken } });
+                var tokens = await PostFormAsync(HawkesGenSettings.GetServer() + "/oauth/token", new Dictionary<string, string> { { "grant_type", "refresh_token" }, { "refresh_token", HawkesGenSettings.GetRefreshToken() } });
                 SaveTokens(tokens);
                 return true;
             }
@@ -162,7 +159,7 @@ namespace HawkesGen.Editor
                 { "jsonrpc", "2.0" }, { "id", Guid.NewGuid().ToString("N") }, { "method", "tools/call" },
                 { "params", new Dictionary<string, object> { { "name", tool }, { "arguments", args ?? new Dictionary<string, object>() } } },
             };
-            var answer = await SendJsonAsync(HttpMethod.Post, HawkesGenSettings.Server + "/mcp", request, auth: true);
+            var answer = await SendJsonAsync(HttpMethod.Post, HawkesGenSettings.GetServer() + "/mcp", request, auth: true);
             var error = Json.Obj(answer, "error");
             if (error != null) throw new HawkesGenException(Json.Str(error, "message", "The server refused the call."));
             var result = Json.Obj(answer, "result");
@@ -231,8 +228,8 @@ namespace HawkesGen.Editor
                     req.Headers.TryAddWithoutValidation("X-Hawkes-Client", "unity/1.0.0");
                     if (auth)
                     {
-                        if (string.IsNullOrEmpty(HawkesGenSettings.AccessToken) && !await RefreshAsync()) throw new HawkesGenException("Sign in to Hawkes Gen first.");
-                        req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HawkesGenSettings.AccessToken);
+                        if (string.IsNullOrEmpty(HawkesGenSettings.GetAccessToken()) && !await RefreshAsync()) throw new HawkesGenException("Sign in to Hawkes Gen first.");
+                        req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HawkesGenSettings.GetAccessToken());
                     }
                     using (var http = NewHttp())
                     using (var r = await http.SendAsync(req))
@@ -240,7 +237,7 @@ namespace HawkesGen.Editor
                         string text = await r.Content.ReadAsStringAsync();
                         if (auth && r.StatusCode == HttpStatusCode.Unauthorized && attempt == 0)
                         {
-                            HawkesGenSettings.AccessToken = "";
+                            HawkesGenSettings.SetAccessToken("");
                             if (await RefreshAsync()) continue;
                             throw new HawkesGenException("Your sign-in expired. Sign in again.");
                         }

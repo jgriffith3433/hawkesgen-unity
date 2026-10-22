@@ -31,12 +31,12 @@ namespace HawkesGen.DevTests
             string cookie = Environment.GetEnvironmentVariable("HG_COOKIE");
             string video = Environment.GetEnvironmentVariable("HG_VIDEO");
             HawkesGenSettings.SignOut();
-            HawkesGenSettings.ClientId = "";
-            HawkesGenSettings.OutputFolder = "Assets/_Dev/Output";
+            HawkesGenSettings.SetClientId("");
+            HawkesGenSettings.SetOutputFolder("Assets/_Dev/Output");
 
             await Check("sign in (browser approval simulated)", async () =>
             {
-                string server = HawkesGenSettings.Server; // EditorPrefs only work on the main thread
+                string server = HawkesGenSettings.GetServer(); // EditorPrefs only work on the main thread
                 await HawkesGenClient.SignInAsync(url =>
                 {
                     // What the approve button does in the browser, then the browser following the redirect.
@@ -59,7 +59,7 @@ namespace HawkesGen.DevTests
                         catch (Exception e) { Debug.Log("[smoke]   browser step failed: " + e); }
                     });
                 });
-                if (!HawkesGenSettings.SignedIn) throw new Exception("no tokens");
+                if (!HawkesGenSettings.IsSignedIn()) throw new Exception("no tokens");
             });
 
             await Check("account", async () =>

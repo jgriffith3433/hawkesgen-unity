@@ -6,8 +6,9 @@ already have, without leaving the editor. It talks to the same MCP server as Cla
 (`https://hawkesgen.com/mcp`), with the same browser sign-in.
 
 - **The package:** `Assets/HawkesGen/` (all that ships). Window > Hawkes Gen. Docs: `Assets/HawkesGen/Documentation/Hawkes Gen Documentation.pdf` (printed from `Docs/HawkesGen-Documentation.html` with Chrome headless; edit the HTML, then reprint).
-- **This repo** is the Unity project it's built and uploaded from (Unity 6000.3.7f1; the package supports 2022.3+). It also
-  has the dev-only smoke test (`Assets/_Dev`) and the Asset Store Publishing Tools in `Packages/manifest.json`.
+- **This repo** is the Unity project it's built and uploaded from (Unity 6000.3.7f1; the package supports 2022.3+). It has the
+  Asset Store Publishing Tools in `Packages/manifest.json`; dev tools (the smoke test, export, demo-scene builder) are in
+  `DevTools/`, outside `Assets` (see DevTools/README.md).
 - **Publishing:** see [PUBLISHING.md](PUBLISHING.md). **Store listing text:** [LISTING.md](LISTING.md).
 
 ## How it works
@@ -24,6 +25,7 @@ already have, without leaving the editor. It talks to the same MCP server as Cla
 A test account's session cookie approves the sign-in, and a green-screen clip feeds the sprite-sheet step:
 
 ```bash
+# copy DevTools/ into Assets/_Dev/Editor/ first
 HG_COOKIE='hg_session=...' HG_VIDEO=/path/to/clip.mp4 Unity -batchmode -projectPath . -executeMethod HawkesGen.DevTests.HawkesGenSmokeTest.Run -logFile -
 ```
 

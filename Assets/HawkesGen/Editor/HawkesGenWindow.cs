@@ -55,7 +55,7 @@ namespace HawkesGen.Editor
 
         void OnEnable()
         {
-            if (HawkesGenSettings.SignedIn) _ = RefreshAccountAsync();
+            if (HawkesGenSettings.IsSignedIn()) _ = RefreshAccountAsync();
         }
 
         void Update()
@@ -67,7 +67,7 @@ namespace HawkesGen.Editor
         {
             _scroll = EditorGUILayout.BeginScrollView(_scroll);
             DrawAccount();
-            if (HawkesGenSettings.SignedIn)
+            if (HawkesGenSettings.IsSignedIn())
             {
                 EditorGUILayout.Space(8);
                 DrawRecipe();
@@ -82,7 +82,7 @@ namespace HawkesGen.Editor
         void DrawAccount()
         {
             EditorGUILayout.LabelField("Hawkes Gen", EditorStyles.boldLabel);
-            if (!HawkesGenSettings.SignedIn)
+            if (!HawkesGenSettings.IsSignedIn())
             {
                 EditorGUILayout.HelpBox("Make sprites, sprite sheets, materials, skyboxes, sounds, voices and music from a prompt. Generation runs on Hawkes Gen's servers and uses credits from your hawkesgen.com account (new accounts get 50 free).", MessageType.Info);
                 using (new EditorGUI.DisabledScope(_busySigningIn))
@@ -95,12 +95,12 @@ namespace HawkesGen.Editor
             using (new EditorGUILayout.HorizontalScope())
             {
                 EditorGUILayout.LabelField(_email ?? "Signed in", _credits >= 0 ? $"{_credits:N0} credits" : "");
-                if (GUILayout.Button("Buy credits", GUILayout.Width(90))) Application.OpenURL(HawkesGenSettings.Server + "/app#credits");
+                if (GUILayout.Button("Buy credits", GUILayout.Width(90))) Application.OpenURL(HawkesGenSettings.GetServer() + "/app#credits");
                 if (GUILayout.Button("↻", GUILayout.Width(24))) _ = RefreshAccountAsync();
             }
             using (new EditorGUILayout.HorizontalScope())
             {
-                HawkesGenSettings.OutputFolder = EditorGUILayout.TextField("Save to", HawkesGenSettings.OutputFolder);
+                HawkesGenSettings.SetOutputFolder(EditorGUILayout.TextField("Save to", HawkesGenSettings.GetOutputFolder()));
                 if (GUILayout.Button("Sign out", GUILayout.Width(70))) { HawkesGenSettings.SignOut(); _email = null; _credits = -1; }
             }
             if (!string.IsNullOrEmpty(_status)) EditorGUILayout.HelpBox(_status, MessageType.Warning);
@@ -272,7 +272,7 @@ namespace HawkesGen.Editor
 
         async Task SaveAsync(Recipe r, string what, Dictionary<string, object> result, Job job)
         {
-            string folder = HawkesGenSettings.OutputFolder.TrimEnd('/');
+            string folder = HawkesGenSettings.GetOutputFolder().TrimEnd('/');
             if (!folder.StartsWith("Assets")) folder = "Assets/Hawkes Gen Output";
             Directory.CreateDirectory(folder);
             var saved = new List<(string path, string title, string mime)>();
