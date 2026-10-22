@@ -5,7 +5,7 @@ AnimationClip), tileable PBR materials, skyboxes, sound effects, voice lines and
 already have, without leaving the editor. It talks to the same MCP server as Claude Code, Cursor and VS Code
 (`https://hawkesgen.com/mcp`), with the same browser sign-in.
 
-- **The package:** `Assets/HawkesGen/` (all that ships). Window > Hawkes Gen. Docs: `Assets/HawkesGen/Documentation/HawkesGen.md`.
+- **The package:** `Assets/HawkesGen/` (all that ships). Window > Hawkes Gen. Docs: `Assets/HawkesGen/Documentation/Hawkes Gen Documentation.pdf` (printed from `Docs/HawkesGen-Documentation.html` with Chrome headless; edit the HTML, then reprint).
 - **This repo** is the Unity project it's built and uploaded from (Unity 6000.3.7f1; the package supports 2022.3+). It also
   has the dev-only smoke test (`Assets/_Dev`) and the Asset Store Publishing Tools in `Packages/manifest.json`.
 - **Publishing:** see [PUBLISHING.md](PUBLISHING.md). **Store listing text:** [LISTING.md](LISTING.md).

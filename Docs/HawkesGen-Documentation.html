@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hawkes Gen for Unity: Documentation</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm; }
+  body { font: 10.5pt/1.55 Georgia, 'Times New Roman', serif; color: #1a1915; }
+  h1 { font-size: 26pt; font-weight: normal; margin: 0 0 4pt; }
+  h2 { font-size: 15pt; font-weight: normal; margin: 22pt 0 6pt; padding-top: 8pt; border-top: 1px solid #1a1915; page-break-after: avoid; }
+  h3 { font: bold 10.5pt Arial, Helvetica, sans-serif; margin: 12pt 0 4pt; page-break-after: avoid; }
+  p, li, td { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; }
+  .sub { color: #4b4840; margin: 0 0 18pt; font-family: Arial, Helvetica, sans-serif; }
+  code { font: 9pt Consolas, 'Courier New', monospace; background: #f1efea; padding: 0 3px; }
+  table { border-collapse: collapse; width: 100%; margin: 6pt 0; }
+  th, td { text-align: left; vertical-align: top; padding: 5pt 8pt 5pt 0; border-bottom: 1px solid #d6d1c6; }
+  th { font: bold 9pt Arial, Helvetica, sans-serif; border-bottom-color: #1a1915; }
+  .toc { list-style: none; padding: 0; columns: 2; }
+  .toc li { margin: 2pt 0; }
+  .note { border-left: 3px solid #c8421d; padding: 4pt 10pt; background: #faf8f4; }
+  ol li, ul li { margin: 3pt 0; }
+</style>
+</head>
+<body>
+<h1>Hawkes Gen for Unity</h1>
+<p class="sub">Documentation · version 1.0.0 · hawkesgen.com</p>
+
+<h2 style="border-top:none;margin-top:6pt">Contents</h2>
+<ol class="toc">
+  <li>1. Overview</li>
+  <li>2. Requirements</li>
+  <li>3. Costs and your account</li>
+  <li>4. Installation</li>
+  <li>5. Signing in</li>
+  <li>6. Making assets, step by step</li>
+  <li>7. What each option makes</li>
+  <li>8. Where results go and how they import</li>
+  <li>9. The demo scene</li>
+  <li>10. Your sign-in, privacy and data</li>
+  <li>11. AI disclosure</li>
+  <li>12. Troubleshooting</li>
+  <li>13. Script reference</li>
+  <li>14. Support</li>
+</ol>
+
+<h2>1. Overview</h2>
+<p>Hawkes Gen for Unity makes game assets from a prompt without leaving the Unity Editor: sprites with transparent
+backgrounds, animated sprite sheets (sliced into Sprites with an AnimationClip), tileable PBR materials, skyboxes, sound
+effects, voice lines and music. It also edits images you already have: remove backgrounds, turn art into pixel art, or
+change them with words. Everything is done from one window, <b>Window &gt; Hawkes Gen</b>, and the results are imported into
+your project, ready to use.</p>
+
+<h2>2. Requirements</h2>
+<ul>
+  <li>Unity 2022.3 or newer, with the Built-in render pipeline, URP or HDRP.</li>
+  <li>An internet connection and a hawkesgen.com account (you can make one while signing in).</li>
+  <li>Optional: the <b>2D Sprite</b> package (Window &gt; Package Manager &gt; Unity Registry &gt; 2D Sprite). With it, sprite
+  sheets are sliced into frames and get an AnimationClip automatically. Without it, you get the sheet and its frame data.</li>
+</ul>
+
+<h2>3. Costs and your account</h2>
+<p class="note"><b>Hawkes Gen is an online service.</b> Generation runs on Hawkes Gen's servers, not on your computer, and is
+paid with credits from your hawkesgen.com account (1 credit = US$0.01). New accounts get 50 free credits. More are sold
+on hawkesgen.com in packs of $10, $25 and $100; credits don't expire.</p>
+<table>
+  <tr><th>What</th><th>Typical cost</th></tr>
+  <tr><td>An image or sprite</td><td>about 5 credits (+2 for a transparent background)</td></tr>
+  <tr><td>Remove background, pixel art</td><td>2 credits</td></tr>
+  <tr><td>A sound effect · a voice line · music</td><td>about 8 · 10 · 20 credits</td></tr>
+  <tr><td>A tileable material with PBR maps</td><td>about 10 credits</td></tr>
+  <tr><td>An animated sprite sheet from an image</td><td>about 50 credits</td></tr>
+</table>
+<p>Every job is priced by the service before it runs, and jobs that fail are refunded automatically. When you sign in you
+choose a daily spending limit for the editor, which you can change at any time at hawkesgen.com/connect.</p>
+
+<h2>4. Installation</h2>
+<ol>
+  <li>Import the package (from the Asset Store, or the .unitypackage from hawkesgen.com/connect).</li>
+  <li>Everything is in <code>Assets/HawkesGen</code>: the editor code, this documentation, a sample image and the demo scene.</li>
+  <li>Open <b>Window &gt; Hawkes Gen</b>.</li>
+</ol>
+
+<h2>5. Signing in</h2>
+<ol>
+  <li>In the Hawkes Gen window, click <b>Sign in with your browser</b>.</li>
+  <li>Your browser opens hawkesgen.com. Sign in (or make an account), then approve <b>Unity Editor</b> and choose a daily
+  spending limit.</li>
+  <li>Go back to Unity. The window shows your account and credit balance.</li>
+</ol>
+<p><b>Sign out</b> in the window removes the sign-in from this computer.</p>
+
+<h2>6. Making assets, step by step</h2>
+<ol>
+  <li>In <b>Make</b>, choose what you want (for example <i>Animated sprite sheet</i>).</li>
+  <li>For options that start from an image (sprite sheet, edit, remove background, pixel art), choose a texture from your
+  project in <b>Image</b>. Selecting a texture in the Project window fills it in.</li>
+  <li>Describe what you want. The typical cost is shown under the form.</li>
+  <li>Click <b>Generate</b>. A progress bar shows each step, your place in line when the service is busy, and the time left.
+  Click <b>Stop</b> to cancel; the unfinished step is refunded.</li>
+  <li>When it finishes, the results are saved and selected in the Project window. Click a result's name to select it again.</li>
+</ol>
+
+<h2>7. What each option makes</h2>
+<table>
+  <tr><th>Option</th><th>Result</th></tr>
+  <tr><td>Sprite or image</td><td>A PNG imported as a Sprite. <i>Transparent background</i> cuts the subject out.</td></tr>
+  <tr><td>Animated sprite sheet</td><td>From your image and a motion ("run cycle facing right"): cut out, animated, keyed to transparency and laid out as a sheet; with 2D Sprite, sliced Sprites and a looping AnimationClip.</td></tr>
+  <tr><td>Edit an image</td><td>Your image changed as described ("give him a golden sword").</td></tr>
+  <tr><td>Remove background</td><td>A trimmed, transparent PNG of the subject.</td></tr>
+  <tr><td>Pixel art</td><td>Your image as pixel art: size, number of colors and an optional 1 px outline.</td></tr>
+  <tr><td>Tileable material</td><td>A seamless texture with normal and roughness maps, and a Material for your render pipeline.</td></tr>
+  <tr><td>Skybox</td><td>A 360° panorama and a Skybox/Panoramic Material (assign it in Window &gt; Rendering &gt; Lighting &gt; Environment).</td></tr>
+  <tr><td>Sound effect · Voice line · Music</td><td>Audio files, imported as AudioClips.</td></tr>
+</table>
+
+<h2>8. Where results go and how they import</h2>
+<ul>
+  <li>Results are saved to <code>Assets/Hawkes Gen Output</code>. Change the folder in the window's <b>Save to</b> field.</li>
+  <li>Images are imported as Sprites with transparency. Sprite sheets are set to Multiple and sliced from their frame JSON
+  (a TexturePacker-style hash, also usable by other tools); the AnimationClip is saved next to the sheet. Drag it onto a
+  GameObject with a SpriteRenderer, or add it to an Animator Controller.</li>
+  <li>Materials use the URP Lit, HDRP Lit or Standard shader, matching the project's render pipeline; the normal map is
+  imported as a normal map.</li>
+</ul>
+
+<h2>9. The demo scene</h2>
+<p>Open <code>Assets/HawkesGen/Samples/Hawkes Gen Demo.unity</code>. It shows the sample sprite and the setup steps. Select
+the sample image (<code>Samples/Knight.png</code>), open Window &gt; Hawkes Gen, choose <i>Animated sprite sheet</i> and try a
+motion such as "walking in place, a looping walk cycle".</p>
+
+<h2>10. Your sign-in, privacy and data</h2>
+<ul>
+  <li>Sign-in uses OAuth in your browser. While you sign in, the editor listens on a one-time local address
+  (<code>http://127.0.0.1:&lt;port&gt;/callback</code>) for the browser to hand back the approval.</li>
+  <li>The sign-in tokens are stored in <b>EditorPrefs</b> on this computer. They are never written into your project, your
+  scenes or a build.</li>
+  <li>Only your prompts and the images you choose in the window are sent to Hawkes Gen. Nothing else from your project is
+  read or sent. The package contains no analytics.</li>
+  <li>Hawkes Gen does not use your prompts, uploads or results to train models. Privacy policy: hawkesgen.com/privacy.
+  Terms: hawkesgen.com/terms.</li>
+</ul>
+
+<h2>11. AI disclosure</h2>
+<p>The assets this tool makes are generated by AI models running on Hawkes Gen's servers (image, image-editing, video,
+sound, speech and music models, chosen per option). The sample image <code>Samples/Knight.png</code> was generated with
+Hawkes Gen. The package's code was written with AI assistance.</p>
+
+<h2>12. Troubleshooting</h2>
+<table>
+  <tr><th>Problem</th><th>What to do</th></tr>
+  <tr><td>Sign-in timed out</td><td>Finish the approval in the browser within 5 minutes, then try again. A firewall that blocks local connections to 127.0.0.1 also stops it.</td></tr>
+  <tr><td>"Not enough credits"</td><td>Click <b>Buy credits</b> in the window (it opens hawkesgen.com), then try again.</td></tr>
+  <tr><td>A daily limit was reached</td><td>Raise the limit for "Unity Editor" at hawkesgen.com/connect.</td></tr>
+  <tr><td>The sheet wasn't sliced</td><td>Install the 2D Sprite package and generate again, or slice the saved sheet in the Sprite Editor using the saved JSON.</td></tr>
+</table>
+
+<h2>13. Script reference</h2>
+<p>No code is needed to use the package. For scripting, everything is in the <code>HawkesGen.Editor</code> namespace (an
+Editor-only assembly):</p>
+<table>
+  <tr><th>Class</th><th>Use</th></tr>
+  <tr><td><code>HawkesGenClient</code></td><td><code>SignInAsync()</code>; <code>CallToolAsync(tool, args)</code> calls a Hawkes Gen tool; <code>RunAsync(tool, args, progress, cancel)</code> runs it to the end with progress; <code>UploadAsync(path)</code> returns an <code>asset:</code> reference; <code>DownloadAsync(url, path)</code>.</td></tr>
+  <tr><td><code>HawkesGenImporter</code></td><td><code>AsSprite</code>, <code>AsSpriteSheet</code>, <code>AsMaterial</code>, <code>AsSkybox</code>: turn downloaded files into Unity assets.</td></tr>
+  <tr><td><code>HawkesGenSettings</code></td><td>The server, the output folder, sign-in state and <code>SignOut()</code>.</td></tr>
+</table>
+<p>Tool names and arguments are listed at hawkesgen.com/connect (the same tools Claude Code, Cursor and VS Code use).</p>
+
+<h2>14. Support</h2>
+<p>support@hawkesgen.com · hawkesgen.com</p>
+</body>
+</html>

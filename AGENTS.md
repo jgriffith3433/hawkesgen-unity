@@ -7,6 +7,6 @@ Read README.md first. Hard rules (the Asset Store Submission Guidelines; a rejec
 - No obsolete or deprecated Unity API, no reflection into internal APIs, no compiler warnings. It must work on 2022.3+.
 - Tokens only in EditorPrefs; never in assets, scenes or builds. Nothing opens a browser unless the user clicks.
 - Only the user's prompts and the files they pick go to the service. No analytics.
-- Keep `Documentation/HawkesGen.md`, `Third-Party Notices.txt` and the disclosures in LISTING.md true when behavior changes.
+- Keep the documentation PDF (from `Docs/HawkesGen-Documentation.html`), `Third-Party Notices.txt` and the disclosures in LISTING.md true when behavior changes.
 - The window's recipes are Hawkes Gen MCP tools (`hawkesgenwebsite/src/mcp.ts`): if a tool's arguments change there,
   change `Request()` here. Run the smoke test (README) before every upload.
