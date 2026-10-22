@@ -1,0 +1,9 @@
+Hawkes Gen for Unity: Third-Party Notices
+
+This package contains no third-party code, libraries or assets.
+
+The sample image (Samples/Knight.png) was generated with Hawkes Gen and is provided for demonstration under the
+Asset Store EULA.
+
+Assets you generate with the Hawkes Gen service are made on its servers. The terms for using the service and what it
+makes are at https://hawkesgen.com/terms.

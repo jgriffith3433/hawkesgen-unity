@@ -1,0 +1,11 @@
+{
+    "name": "HawkesGen.DevTests",
+    "rootNamespace": "HawkesGen.DevTests",
+    "references": [
+        "HawkesGen.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "autoReferenced": false
+}
