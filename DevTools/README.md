@@ -6,3 +6,4 @@ compile, use them, then delete `Assets/_Dev` again before validating or uploadin
 - `HawkesGenSmokeTest.cs`: the live end-to-end test (see the repo README).
 - `HawkesGenExport.cs`: exports `Assets/HawkesGen` as a `.unitypackage` (the download on hawkesgen.com).
 - `HawkesGenDemoScene.cs`: rebuilds `Samples/Hawkes Gen Demo.unity` (Tools > Hawkes Gen (dev) > Build Demo Scene).
+- `make_unitypackage.py`: builds the same `.unitypackage` without Unity (it can stay open): `python DevTools/make_unitypackage.py ../hawkesgenwebsite/public/downloads/HawkesGen.unitypackage`
