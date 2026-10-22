@@ -1,5 +1,6 @@
 """Builds a .unitypackage from Assets/HawkesGen without Unity (it can stay open).
 
+Prefer Unity's own export (HawkesGenExport.cs, from a copy of the project if the editor has it open).
 A .unitypackage is a gzipped tar with one folder per asset, named by its GUID: asset (the file; none for folders),
 asset.meta and pathname.
     python DevTools/make_unitypackage.py <out.unitypackage>
@@ -30,6 +31,9 @@ with tarfile.open(out, 'w:gz') as t:
         meta = open(m, 'rb').read()
         guid = re.search(rb'guid: ([0-9a-f]{32})', meta).group(1).decode()
         path = m[:-len('.meta')]
+        d = tarfile.TarInfo(guid)  # Unity's importer needs the folder entry too (else a NullReference in its tree view)
+        d.type, d.mode, d.mtime = tarfile.DIRTYPE, 0o755, int(time.time())
+        t.addfile(d)
         add(t, f'{guid}/asset.meta', meta)
         add(t, f'{guid}/pathname', path.encode())
         if os.path.isfile(path):
