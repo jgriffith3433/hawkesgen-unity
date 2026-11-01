@@ -95,7 +95,7 @@ namespace HawkesGen.Editor
             using (new EditorGUILayout.HorizontalScope())
             {
                 EditorGUILayout.LabelField(_email ?? "Signed in", _credits >= 0 ? $"{_credits:N0} credits" : "");
-                if (GUILayout.Button("Buy credits", GUILayout.Width(90))) Application.OpenURL(HawkesGenSettings.GetServer() + "/app#credits");
+                if (GUILayout.Button("Buy credits", GUILayout.Width(90))) Application.OpenURL(HawkesGenSettings.GetServer() + "/#credits");
                 if (GUILayout.Button("↻", GUILayout.Width(24))) _ = RefreshAccountAsync();
             }
             using (new EditorGUILayout.HorizontalScope())
