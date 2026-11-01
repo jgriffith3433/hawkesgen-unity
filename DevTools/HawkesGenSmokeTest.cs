@@ -47,14 +47,16 @@ namespace HawkesGen.DevTests
                     {
                         try
                         {
-                        using (var http = new HttpClient(new HttpClientHandler { UseCookies = false }))
+                        using (var http = new HttpClient(new HttpClientHandler { UseCookies = false, AllowAutoRedirect = false }))
                         {
-                            var body = "{\"query\":" + Json.Write(new Uri(url).Query.TrimStart('?')) + ",\"daily_cap\":500}";
-                            var req = new HttpRequestMessage(HttpMethod.Post, server + "/v1/oauth/approve") { Content = new StringContent(body, Encoding.UTF8, "application/json") };
+                            // The consent page's Allow: the authorize query posted back to /oauth/authorize with action=allow.
+                            var form = new Uri(url).Query.TrimStart('?') + "&action=allow";
+                            var req = new HttpRequestMessage(HttpMethod.Post, server + "/oauth/authorize") { Content = new StringContent(form, Encoding.UTF8, "application/x-www-form-urlencoded") };
                             req.Headers.Add("Cookie", cookie);
                             var r = await http.SendAsync(req);
-                            var redirect = Json.Str(Json.Parse(await r.Content.ReadAsStringAsync()), "redirect");
-                            Debug.Log($"[smoke]   approve {(int)r.StatusCode} -> {redirect}");
+                            var redirect = r.Headers.Location?.ToString() ?? "";
+                            Debug.Log($"[smoke]   approve {(int)r.StatusCode} -> {(redirect.Contains("code=") ? "code issued" : redirect)}");
+                            if (redirect.Length == 0) { Debug.Log("[smoke]   approve answered: " + await r.Content.ReadAsStringAsync()); return; }
                             var back = await http.GetAsync(redirect);
                             Debug.Log($"[smoke]   listener answered {(int)back.StatusCode}");
                         }
