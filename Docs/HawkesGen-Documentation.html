@@ -23,7 +23,7 @@
 </head>
 <body>
 <h1>Hawkes Gen for Unity</h1>
-<p class="sub">Documentation · version 1.0.0 · hawkesgen.com</p>
+<p class="sub">Documentation · version 1.0.0 · hawkesgen.ai</p>
 
 <h2 style="border-top:none;margin-top:6pt">Contents</h2>
 <ol class="toc">
@@ -53,15 +53,15 @@ your project, ready to use.</p>
 <h2>2. Requirements</h2>
 <ul>
   <li>Unity 2022.3 or newer, with the Built-in render pipeline, URP or HDRP.</li>
-  <li>An internet connection and a hawkesgen.com account (you can make one while signing in).</li>
+  <li>An internet connection and a hawkesgen.ai account (you can make one while signing in).</li>
   <li>Optional: the <b>2D Sprite</b> package (Window &gt; Package Manager &gt; Unity Registry &gt; 2D Sprite). With it, sprite
   sheets are sliced into frames and get an AnimationClip automatically. Without it, you get the sheet and its frame data.</li>
 </ul>
 
 <h2>3. Costs and your account</h2>
 <p class="note"><b>Hawkes Gen is an online service.</b> Generation runs on Hawkes Gen's servers, not on your computer, and is
-paid with credits from your hawkesgen.com account (1 credit = US$0.01). New accounts get 50 free credits. More are sold
-on hawkesgen.com in packs of $10, $25 and $100; credits don't expire.</p>
+paid with credits from your hawkesgen.ai account (1 credit = US$0.01). New accounts get 50 free credits. More are sold
+on hawkesgen.ai in packs of $10, $25 and $100; credits don't expire.</p>
 <table>
   <tr><th>What</th><th>Typical cost</th></tr>
   <tr><td>An image or sprite</td><td>about 5 credits (+2 for a transparent background)</td></tr>
@@ -70,12 +70,11 @@ on hawkesgen.com in packs of $10, $25 and $100; credits don't expire.</p>
   <tr><td>A tileable material with PBR maps</td><td>about 10 credits</td></tr>
   <tr><td>An animated sprite sheet from an image</td><td>about 50 credits</td></tr>
 </table>
-<p>Every job is priced by the service before it runs, and jobs that fail are refunded automatically. When you sign in you
-choose a daily spending limit for the editor, which you can change at any time at hawkesgen.com/connect.</p>
+<p>Every job is priced by the service before it runs, and jobs that fail are refunded automatically.</p>
 
 <h2>4. Installation</h2>
 <ol>
-  <li>Import the package (from the Asset Store, or the .unitypackage from hawkesgen.com/connect).</li>
+  <li>Import the package from the Asset Store.</li>
   <li>Everything is in <code>Assets/HawkesGen</code>: the editor code, this documentation, a sample image and the demo scene.</li>
   <li>Open <b>Window &gt; Hawkes Gen</b>.</li>
 </ol>
@@ -83,8 +82,7 @@ choose a daily spending limit for the editor, which you can change at any time a
 <h2>5. Signing in</h2>
 <ol>
   <li>In the Hawkes Gen window, click <b>Sign in with your browser</b>.</li>
-  <li>Your browser opens hawkesgen.com. Sign in (or make an account), then approve <b>Unity Editor</b> and choose a daily
-  spending limit.</li>
+  <li>Your browser opens hawkesgen.ai. Sign in (or make an account), then approve <b>Unity Editor</b>.</li>
   <li>Go back to Unity. The window shows your account and credit balance.</li>
 </ol>
 <p><b>Sign out</b> in the window removes the sign-in from this computer.</p>
@@ -136,8 +134,8 @@ motion such as "walking in place, a looping walk cycle".</p>
   scenes or a build.</li>
   <li>Only your prompts and the images you choose in the window are sent to Hawkes Gen. Nothing else from your project is
   read or sent. The package contains no analytics.</li>
-  <li>Hawkes Gen does not use your prompts, uploads or results to train models. Privacy policy: hawkesgen.com/privacy.
-  Terms: hawkesgen.com/terms.</li>
+  <li>Hawkes Gen does not use your prompts, uploads or results to train models. Privacy policy: hawkesgen.ai/legal#privacy.
+  Terms: hawkesgen.ai/legal#terms.</li>
 </ul>
 
 <h2>11. AI disclosure</h2>
@@ -149,8 +147,7 @@ Hawkes Gen. The package's code was written with AI assistance.</p>
 <table>
   <tr><th>Problem</th><th>What to do</th></tr>
   <tr><td>Sign-in timed out</td><td>Finish the approval in the browser within 5 minutes, then try again. A firewall that blocks local connections to 127.0.0.1 also stops it.</td></tr>
-  <tr><td>"Not enough credits"</td><td>Click <b>Buy credits</b> in the window (it opens hawkesgen.com), then try again.</td></tr>
-  <tr><td>A daily limit was reached</td><td>Raise the limit for "Unity Editor" at hawkesgen.com/connect.</td></tr>
+  <tr><td>"Not enough credits"</td><td>Click <b>Buy credits</b> in the window (it opens hawkesgen.ai), then try again.</td></tr>
   <tr><td>The sheet wasn't sliced</td><td>Install the 2D Sprite package and generate again, or slice the saved sheet in the Sprite Editor using the saved JSON.</td></tr>
 </table>
 
@@ -159,13 +156,13 @@ Hawkes Gen. The package's code was written with AI assistance.</p>
 Editor-only assembly):</p>
 <table>
   <tr><th>Class</th><th>Use</th></tr>
-  <tr><td><code>HawkesGenClient</code></td><td><code>SignInAsync()</code>; <code>CallToolAsync(tool, args)</code> calls a Hawkes Gen tool; <code>RunAsync(tool, args, progress, cancel)</code> runs it to the end with progress; <code>UploadAsync(path)</code> returns an <code>asset:</code> reference; <code>DownloadAsync(url, path)</code>.</td></tr>
+  <tr><td><code>HawkesGenClient</code></td><td><code>SignInAsync()</code>; <code>CallToolAsync(tool, args)</code> calls a Hawkes Gen tool; <code>RunAsync(tool, args, progress, cancel)</code> runs it to the end with progress; <code>UploadAsync(path)</code> returns a file reference; <code>DownloadAsync(url, path)</code>.</td></tr>
   <tr><td><code>HawkesGenImporter</code></td><td><code>AsSprite</code>, <code>AsSpriteSheet</code>, <code>AsMaterial</code>, <code>AsSkybox</code>: turn downloaded files into Unity assets.</td></tr>
   <tr><td><code>HawkesGenSettings</code></td><td>The server, the output folder, sign-in state and <code>SignOut()</code>.</td></tr>
 </table>
-<p>Tool names and arguments are listed at hawkesgen.com/connect (the same tools Claude Code, Cursor and VS Code use).</p>
+<p>Tool names and arguments are the Hawkes Gen MCP server's (hawkesgen.ai/mcp), the same tools Claude Code, Cursor and VS Code use.</p>
 
 <h2>14. Support</h2>
-<p>support@hawkesgen.com · hawkesgen.com</p>
+<p>support@hawkesgen.ai · hawkesgen.ai</p>
 </body>
 </html>

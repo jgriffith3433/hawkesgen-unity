@@ -1,4 +1,4 @@
-// Not part of the package: exports Assets/HawkesGen as a .unitypackage (the direct download on hawkesgen.com).
+// Not part of the package: exports Assets/HawkesGen as a .unitypackage (a direct download).
 //   Unity -batchmode -quit -projectPath . -executeMethod HawkesGen.DevTests.HawkesGenExport.Run -out <path>
 using System;
 using UnityEditor;

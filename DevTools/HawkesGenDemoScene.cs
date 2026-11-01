@@ -40,11 +40,11 @@ namespace HawkesGen.DevTests
             Text("Title", "Hawkes Gen for Unity", new Vector3(0.6f, 2.2f, 0f), 0.11f, FontStyle.Bold);
             Text("Setup steps",
                 "1. Open Window > Hawkes Gen.\n" +
-                "2. Click \"Sign in with your browser\" and approve\n    Unity Editor on hawkesgen.com.\n" +
+                "2. Click \"Sign in with your browser\" and approve\n    Unity Editor on hawkesgen.ai.\n" +
                 "3. Select Samples/Knight.png in the Project window.\n" +
                 "4. Choose \"Animated sprite sheet\", type a motion\n    (\"walking in place, a looping walk cycle\"),\n    and click Generate.\n" +
                 "5. The sheet arrives in Assets/Hawkes Gen Output,\n    sliced, with an AnimationClip: drag the clip\n    onto this sprite and press Play.\n\n" +
-                "Uses credits from your hawkesgen.com account.\n" +
+                "Uses credits from your hawkesgen.ai account.\n" +
                 "See Documentation/Hawkes Gen Documentation.pdf.",
                 new Vector3(0.6f, 1.6f, 0f), 0.065f, FontStyle.Normal);
 

@@ -1,9 +1,9 @@
 # Hawkes Gen for Unity
 
-A Unity Editor extension for [Hawkes Gen](https://hawkesgen.com). It makes sprites, animated sprite sheets (sliced, with an
+A Unity Editor extension for [Hawkes Gen](https://hawkesgen.ai). It makes sprites, animated sprite sheets (sliced, with an
 AnimationClip), tileable PBR materials, skyboxes, sound effects, voice lines and music from a prompt, and edits images you
 already have, without leaving the editor. It talks to the same MCP server as Claude Code, Cursor and VS Code
-(`https://hawkesgen.com/mcp`), with the same browser sign-in.
+(`https://hawkesgen.ai/mcp`), with the same browser sign-in.
 
 - **The package:** `Assets/HawkesGen/` (all that ships). Window > Hawkes Gen. Docs: `Assets/HawkesGen/Documentation/Hawkes Gen Documentation.pdf` (printed from `Docs/HawkesGen-Documentation.html` with Chrome headless; edit the HTML, then reprint).
 - **This repo** is the Unity project it's built and uploaded from (Unity 6000.3.7f1; the package supports 2022.3+). It has the
@@ -30,4 +30,4 @@ HG_COOKIE='hg_session=...' HG_VIDEO=/path/to/clip.mp4 Unity -batchmode -projectP
 ```
 
 It signs in through the real loopback flow, uploads the sample, removes its background, makes pixel art, and turns a clip
-into a sliced sheet with an AnimationClip, against hawkesgen.com (about 6 credits).
+into a sliced sheet with an AnimationClip, against hawkesgen.ai (about 6 credits).

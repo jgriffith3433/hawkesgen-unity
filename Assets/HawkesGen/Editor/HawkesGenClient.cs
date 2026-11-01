@@ -22,7 +22,14 @@ namespace HawkesGen.Editor
         // Methods over EditorPrefs, no static fields or properties: nothing is kept between Play mode sessions.
         static string Key(string name) => "HawkesGen." + name;
 
-        public static string GetServer() => EditorPrefs.GetString(Key("Server"), "https://hawkesgen.com").TrimEnd('/');
+        const string DefaultServer = "https://hawkesgen.ai";
+
+        // hawkesgen.com no longer answers: a server saved before the move goes to hawkesgen.ai (sign in again there).
+        public static string GetServer()
+        {
+            string s = EditorPrefs.GetString(Key("Server"), DefaultServer).TrimEnd('/');
+            return s == "https://hawkesgen.com" || s == "https://www.hawkesgen.com" ? DefaultServer : s;
+        }
         public static void SetServer(string value) => EditorPrefs.SetString(Key("Server"), value);
 
         public static string GetAccessToken() => EditorPrefs.GetString(Key("Access"), "");

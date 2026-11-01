@@ -6,4 +6,4 @@ The sample image (Samples/Knight.png) was generated with Hawkes Gen and is provi
 Asset Store EULA.
 
 Assets you generate with the Hawkes Gen service are made on its servers. The terms for using the service and what it
-makes are at https://hawkesgen.com/terms.
+makes are at https://hawkesgen.ai/legal#terms.
