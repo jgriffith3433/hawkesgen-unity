@@ -1,0 +1,33 @@
+# Temporary (claude/measure-gpu-cutout branch only): times remove background on beta Gen, signed in as this repo's test
+# account with the run's GitHub OIDC token (no secret). Deleted with the branch once measured.
+name: Measure remove background on beta
+on:
+  push:
+    branches: [claude/measure-gpu-cutout]
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove background on beta, twice
+        run: |
+          set -euo pipefail
+          server=https://beta.hawkesgen.ai
+          oidc=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=hawkesgen-test-signin" | jq -r .value)
+          echo "::add-mask::$oidc"
+          curl -fsS -c jar -H 'Content-Type: application/json' -o /dev/null -d "{\"token\":\"$oidc\"}" "$server/v1/users/test-session/github"
+          curl -fsS "$server/v1/health" | jq -c '{commit}'
+          proj=$(curl -fsS -b jar "$server/v1/users/me" | jq -r '.project // .user.project')
+          blob=$(curl -fsS -b jar -H 'X-Filename: knight.png' --data-binary @Assets/HawkesGen/Samples/Knight.png "$server/v1/blobs" | jq -r .blob)
+          for i in 1 2 3; do
+            t0=$(date +%s.%N)
+            curl -fsS -b jar -H 'Content-Type: application/json' \
+              -d "{\"tool\":\"image.cutout\",\"project\":\"$proj\",\"inputs\":{\"image\":\"$blob\"},\"timeout\":900}" "$server/v1/run" > job$i.json
+            t1=$(date +%s.%N)
+            echo "run $i: $(echo "$t1 - $t0" | bc) s from submit to answer"
+            jq -c '{tool, status, error, gpu_seconds, created, started, finished, result}' job$i.json
+            jq -r '.log[]?' job$i.json | sed 's/^/  log: /'
+          done
