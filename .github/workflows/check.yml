@@ -79,12 +79,6 @@ jobs:
         run: |
           if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then echo "set=1" >> "$GITHUB_OUTPUT"
           else echo "::warning::Skipping the Unity checks: add the repo secrets UNITY_EMAIL and UNITY_PASSWORD (the account Hawkes Gen's Unity builds use)"; fi
-      - uses: actions/cache@v4
-        if: steps.license.outputs.set == '1'
-        with:
-          path: Library
-          key: library-6000.3.7f1-${{ hashFiles('Packages/packages-lock.json', 'Packages/manifest.json') }}
-          restore-keys: library-6000.3.7f1-
       - name: Tools the scripts use
         if: steps.license.outputs.set == '1'
         run: command -v curl >/dev/null && command -v openssl >/dev/null || (apt-get update -qq && apt-get install -y -qq curl openssl >/dev/null)
