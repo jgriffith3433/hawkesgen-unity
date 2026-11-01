@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Remove background on beta, twice
+      - name: Remove background on beta, three times
         run: |
           set -euo pipefail
           server=https://beta.hawkesgen.ai
@@ -21,8 +21,12 @@ jobs:
           curl -fsS -c jar -H 'Content-Type: application/json' -o /dev/null -d "{\"token\":\"$oidc\"}" "$server/v1/users/test-session/github"
           curl -fsS "$server/v1/health" | jq -c '{commit}'
           proj=$(curl -fsS -b jar "$server/v1/users/me" | jq -r '.project // .user.project')
-          blob=$(curl -fsS -b jar -H 'X-Filename: knight.png' --data-binary @Assets/HawkesGen/Samples/Knight.png "$server/v1/blobs" | jq -r .blob)
+          # Run 1: the same picture as before (a warm GPU's cache). Runs 2 and 3: one pixel changed, so the model runs again.
+          pip install -q pillow
           for i in 1 2 3; do
+            python3 -c "from PIL import Image; im = Image.open('Assets/HawkesGen/Samples/Knight.png'); im = im.convert('RGBA'); (im.putpixel((0, 0), ($i, 0, 0, 255)) if $i > 1 else None); im.save('k$i.png')"
+            [ $i = 1 ] && cp Assets/HawkesGen/Samples/Knight.png k1.png
+            blob=$(curl -fsS -b jar -H 'X-Filename: knight.png' --data-binary @k$i.png "$server/v1/blobs" | jq -r .blob)
             t0=$(date +%s.%N)
             curl -fsS -b jar -H 'Content-Type: application/json' \
               -d "{\"tool\":\"image.cutout\",\"project\":\"$proj\",\"inputs\":{\"image\":\"$blob\"},\"timeout\":900}" "$server/v1/run" > job$i.json
