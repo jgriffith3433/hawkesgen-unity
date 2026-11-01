@@ -62,7 +62,12 @@ compile() {
     [ -z "$errors$warnings" ] && { echo "Unity exited $code:"; tail -40 "$OUT/compile.log"; }
     return 1
   fi
-  echo "Compiled with no errors and no warnings in Assets/HawkesGen ($(grep -c 'warning CS' "$OUT/compile.log") warnings elsewhere)"
+  # A clean exit with no compile at all (a cached Library, a license that quietly failed) proves nothing: the package's
+  # own assembly must show in the log.
+  if ! grep -q 'HawkesGen.Editor' "$OUT/compile.log"; then
+    echo "Unity exited cleanly but the log shows no HawkesGen.Editor compile:"; tail -30 "$OUT/compile.log"; return 1
+  fi
+  echo "Compiled HawkesGen.Editor with no errors and no warnings in Assets/HawkesGen ($(grep -c 'warning CS' "$OUT/compile.log") warnings elsewhere)"
 }
 
 test_cookie() {
