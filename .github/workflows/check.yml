@@ -1,0 +1,94 @@
+# The package's checks with no laptop: the documentation PDF reprinted from Docs/HawkesGen-Documentation.html, the
+# project compiled in Unity (no errors, no warnings in Assets/HawkesGen), and on request the live smoke test.
+# Secrets (repo settings, each optional; a job without its secrets says so and skips):
+#   UNITY_EMAIL, UNITY_PASSWORD (+ UNITY_SERIAL for Plus/Pro): the Unity account Hawkes Gen's Unity builds use
+# The smoke test needs no secret: the run's GitHub OIDC token signs in this repo's test account on beta Gen.
+name: Check
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      smoke:
+        description: Run the live smoke test against beta Gen (spends a few of the test account's credits)
+        type: boolean
+        default: false
+      sprite:
+        description: Also make a sprite sheet in the smoke test (a GPU clip)
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  id-token: write # the smoke test signs in to beta Gen with the run's own GitHub OIDC token, no secret
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pdf:
+    name: Documentation PDF
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: The documentation's fonts (Georgia, Arial)
+        run: |
+          echo "ttf-mscorefonts-installer msttcorefonts/accept-mscorefonts-eula select true" | sudo debconf-set-selections
+          sudo apt-get update -qq && sudo apt-get install -y -qq ttf-mscorefonts-installer >/dev/null && fc-cache -f >/dev/null
+      - name: Print the PDF with Chrome headless
+        run: |
+          pdf="Assets/HawkesGen/Documentation/Hawkes Gen Documentation.pdf"
+          google-chrome --headless=new --no-sandbox --disable-gpu --no-pdf-header-footer --virtual-time-budget=5000 \
+            --print-to-pdf="$pdf" "file://$PWD/Docs/HawkesGen-Documentation.html"
+          test -s "$pdf"
+          echo "Printed $(stat -c %s "$pdf") bytes" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: documentation-pdf
+          path: Assets/HawkesGen/Documentation/Hawkes Gen Documentation.pdf
+      # On a branch (never main), when the HTML is newer than the PDF in git, the reprint is committed to the branch.
+      # A commit made with GITHUB_TOKEN starts no new run, so this can't loop.
+      - name: Commit the reprint when the HTML changed
+        if: github.event_name == 'push' && github.ref != 'refs/heads/main'
+        run: |
+          html=$(git log -1 --format=%ct -- Docs/HawkesGen-Documentation.html)
+          pdf=$(git log -1 --format=%ct -- "Assets/HawkesGen/Documentation/Hawkes Gen Documentation.pdf")
+          if [ "${html:-0}" -le "${pdf:-0}" ]; then echo "The PDF is already newer than the HTML"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "Assets/HawkesGen/Documentation/Hawkes Gen Documentation.pdf"
+          git commit -m "Reprint the documentation PDF from Docs/HawkesGen-Documentation.html"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+  unity:
+    name: Unity compile and smoke test
+    runs-on: ubuntu-latest
+    container: unityci/editor:ubuntu-6000.3.7f1-base-3.2.2
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+      HG_SPRITE: ${{ inputs.sprite && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Is a Unity account set?
+        id: license
+        run: |
+          if [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then echo "set=1" >> "$GITHUB_OUTPUT"
+          else echo "::warning::Skipping the Unity checks: add the repo secrets UNITY_EMAIL and UNITY_PASSWORD (the account Hawkes Gen's Unity builds use)"; fi
+      - name: Tools the scripts use
+        if: steps.license.outputs.set == '1'
+        run: command -v curl >/dev/null && command -v openssl >/dev/null || (apt-get update -qq && apt-get install -y -qq curl openssl >/dev/null)
+      - name: Compile
+        if: steps.license.outputs.set == '1' && !(github.event_name == 'workflow_dispatch' && inputs.smoke)
+        run: bash DevTools/ci/unity.sh compile
+      - name: Compile and run the smoke test against beta Gen
+        if: steps.license.outputs.set == '1' && github.event_name == 'workflow_dispatch' && inputs.smoke
+        run: bash DevTools/ci/unity.sh smoke
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.license.outputs.set == '1'
+        with:
+          name: unity-logs
+          path: ${{ runner.temp }}/hawkesgen-unity/*.log

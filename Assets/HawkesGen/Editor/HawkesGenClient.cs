@@ -22,7 +22,14 @@ namespace HawkesGen.Editor
         // Methods over EditorPrefs, no static fields or properties: nothing is kept between Play mode sessions.
         static string Key(string name) => "HawkesGen." + name;
 
-        public static string GetServer() => EditorPrefs.GetString(Key("Server"), "https://hawkesgen.com").TrimEnd('/');
+        const string DefaultServer = "https://hawkesgen.ai";
+
+        // hawkesgen.com no longer answers: a server saved before the move goes to hawkesgen.ai (sign in again there).
+        public static string GetServer()
+        {
+            string s = EditorPrefs.GetString(Key("Server"), DefaultServer).TrimEnd('/');
+            return s == "https://hawkesgen.com" || s == "https://www.hawkesgen.com" ? DefaultServer : s;
+        }
         public static void SetServer(string value) => EditorPrefs.SetString(Key("Server"), value);
 
         public static string GetAccessToken() => EditorPrefs.GetString(Key("Access"), "");
@@ -174,7 +181,11 @@ namespace HawkesGen.Editor
         /// <summary>Runs a tool to the end, reporting progress (0-1 and a sentence) as the server reports it.</summary>
         public static async Task<Dictionary<string, object>> RunAsync(string tool, Dictionary<string, object> args, Action<float, string> progress, CancellationToken cancel)
         {
-            var r = await CallToolAsync(tool, args);
+            // Ask the server to answer within a minute (still running then: a task to follow), so no call outlasts
+            // the proxy in front of it (Cloudflare closes a request after 100 s with a 524).
+            var first = args != null ? new Dictionary<string, object>(args) : new Dictionary<string, object>();
+            if (!first.ContainsKey("wait_seconds")) first["wait_seconds"] = 60;
+            var r = await CallToolAsync(tool, first);
             while (Json.Str(r, "state") == "running")
             {
                 cancel.ThrowIfCancellationRequested();

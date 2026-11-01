@@ -1,6 +1,7 @@
 // Not part of the package (outside Assets/HawkesGen): drives the package against the live service from batch mode.
 //   Unity -batchmode -projectPath . -executeMethod HawkesGen.DevTests.HawkesGenSmokeTest.Run
-//   env HG_COOKIE: a test account's hg_session cookie (the "browser" that approves), HG_VIDEO: a green-screen clip.
+//   env HG_COOKIE: a test account's hg_session cookie (the "browser" that approves). Optional: HG_SERVER (default the
+//   window's server, hawkesgen.ai), HG_SPRITE=1 to also make a sprite sheet (a GPU clip: costs more than the rest).
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,7 +30,9 @@ namespace HawkesGen.DevTests
                 catch (Exception e) { failures++; Say("FAIL " + name + ": " + e.Message); }
             }
             string cookie = Environment.GetEnvironmentVariable("HG_COOKIE");
-            string video = Environment.GetEnvironmentVariable("HG_VIDEO");
+            string serverOverride = Environment.GetEnvironmentVariable("HG_SERVER");
+            bool sprite = Environment.GetEnvironmentVariable("HG_SPRITE") == "1";
+            if (!string.IsNullOrEmpty(serverOverride)) HawkesGenSettings.SetServer(serverOverride.TrimEnd('/'));
             HawkesGenSettings.SignOut();
             HawkesGenSettings.SetClientId("");
             HawkesGenSettings.SetOutputFolder("Assets/_Dev/Output");
@@ -44,14 +47,16 @@ namespace HawkesGen.DevTests
                     {
                         try
                         {
-                        using (var http = new HttpClient(new HttpClientHandler { UseCookies = false }))
+                        using (var http = new HttpClient(new HttpClientHandler { UseCookies = false, AllowAutoRedirect = false }))
                         {
-                            var body = "{\"query\":" + Json.Write(new Uri(url).Query.TrimStart('?')) + ",\"daily_cap\":500}";
-                            var req = new HttpRequestMessage(HttpMethod.Post, server + "/v1/oauth/approve") { Content = new StringContent(body, Encoding.UTF8, "application/json") };
+                            // The consent page's Allow: the authorize query posted back to /oauth/authorize with action=allow.
+                            var form = new Uri(url).Query.TrimStart('?') + "&action=allow";
+                            var req = new HttpRequestMessage(HttpMethod.Post, server + "/oauth/authorize") { Content = new StringContent(form, Encoding.UTF8, "application/x-www-form-urlencoded") };
                             req.Headers.Add("Cookie", cookie);
                             var r = await http.SendAsync(req);
-                            var redirect = Json.Str(Json.Parse(await r.Content.ReadAsStringAsync()), "redirect");
-                            Debug.Log($"[smoke]   approve {(int)r.StatusCode} -> {redirect}");
+                            var redirect = r.Headers.Location?.ToString() ?? "";
+                            Debug.Log($"[smoke]   approve {(int)r.StatusCode} -> {(redirect.Contains("code=") ? "code issued" : redirect)}");
+                            if (redirect.Length == 0) { Debug.Log("[smoke]   approve answered: " + await r.Content.ReadAsStringAsync()); return; }
                             var back = await http.GetAsync(redirect);
                             Debug.Log($"[smoke]   listener answered {(int)back.StatusCode}");
                         }
@@ -89,10 +94,9 @@ namespace HawkesGen.DevTests
                 if (Json.Arr(r, "files").Count != 1) throw new Exception("no file");
             });
 
-            await Check("sprite sheet from a clip -> sliced frames + AnimationClip", async () =>
+            if (sprite) await Check("sprite sheet -> sliced frames + AnimationClip", async () =>
             {
-                var clip = await HawkesGenClient.UploadAsync(video);
-                var r = await HawkesGenClient.RunAsync("make_sprite_sheet", new Dictionary<string, object> { { "video", clip }, { "key", "00ff00" }, { "frames", 8 }, { "loop", true } }, (p, m) => Say($"  {p:P0} {m}"), default);
+                var r = await HawkesGenClient.RunAsync("make_sprite_sheet", new Dictionary<string, object> { { "image", knight }, { "motion", "walks in place, a looping walk cycle, side view" }, { "frames", 8 } }, (p, m) => Say($"  {p:P0} {m}"), default);
                 string png = null, json = null;
                 foreach (var f in Json.Arr(r, "files"))
                 {

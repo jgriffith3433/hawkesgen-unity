@@ -84,7 +84,7 @@ namespace HawkesGen.Editor
             EditorGUILayout.LabelField("Hawkes Gen", EditorStyles.boldLabel);
             if (!HawkesGenSettings.IsSignedIn())
             {
-                EditorGUILayout.HelpBox("Make sprites, sprite sheets, materials, skyboxes, sounds, voices and music from a prompt. Generation runs on Hawkes Gen's servers and uses credits from your hawkesgen.com account (new accounts get 50 free).", MessageType.Info);
+                EditorGUILayout.HelpBox("Make sprites, sprite sheets, materials, skyboxes, sounds, voices and music from a prompt. Generation runs on Hawkes Gen's servers and uses credits from your hawkesgen.ai account (new accounts get 50 free).", MessageType.Info);
                 using (new EditorGUI.DisabledScope(_busySigningIn))
                 {
                     if (GUILayout.Button(_busySigningIn ? "Waiting for your browser..." : "Sign in with your browser", GUILayout.Height(30))) _ = SignInAsync();
@@ -95,7 +95,7 @@ namespace HawkesGen.Editor
             using (new EditorGUILayout.HorizontalScope())
             {
                 EditorGUILayout.LabelField(_email ?? "Signed in", _credits >= 0 ? $"{_credits:N0} credits" : "");
-                if (GUILayout.Button("Buy credits", GUILayout.Width(90))) Application.OpenURL(HawkesGenSettings.GetServer() + "/app#credits");
+                if (GUILayout.Button("Buy credits", GUILayout.Width(90))) Application.OpenURL(HawkesGenSettings.GetServer() + "/#credits");
                 if (GUILayout.Button("↻", GUILayout.Width(24))) _ = RefreshAccountAsync();
             }
             using (new EditorGUILayout.HorizontalScope())
@@ -249,22 +249,36 @@ namespace HawkesGen.Editor
         {
             switch (r)
             {
-                case Recipe.Sprite: return ("generate_image", new Dictionary<string, object> { { "prompt", what }, { "aspect", Aspects[aspect] }, { "transparent", transparent } });
-                case Recipe.SpriteSheet: return ("make_sprite_sheet", new Dictionary<string, object> { { "image", input }, { "motion", what }, { "frames", frames }, { "loop", true } });
+                case Recipe.Sprite: return ("generate_image", new Dictionary<string, object> { { "prompt", what }, { "shape", ShapeOf(Aspects[aspect]) }, { "transparent", transparent } });
+                case Recipe.SpriteSheet: return ("make_sprite_sheet", new Dictionary<string, object> { { "image", input }, { "motion", what }, { "frames", frames } });
                 case Recipe.EditImage: return ("edit_image", new Dictionary<string, object> { { "image", input }, { "instruction", what } });
                 case Recipe.RemoveBackground: return ("remove_background", new Dictionary<string, object> { { "image", input } });
                 case Recipe.PixelArt:
                     var steps = new List<object> { Step("trim"), new Dictionary<string, object> { { "op", "pixelate" }, { "size", pixelSize }, { "colors", pixelColors } } };
                     if (outline) steps.Add(new Dictionary<string, object> { { "op", "outline" }, { "width", 1 } });
                     return ("transform_image", new Dictionary<string, object> { { "image", input }, { "steps", steps } });
-                case Recipe.Material: return ("make_texture", new Dictionary<string, object> { { "surface", what } });
+                case Recipe.Material: return ("make_texture", new Dictionary<string, object> { { "prompt", what } });
                 case Recipe.Skybox: return ("make_skybox", new Dictionary<string, object> { { "prompt", what } });
                 case Recipe.SoundEffect:
-                    var sfx = new Dictionary<string, object> { { "description", what }, { "loop", loop } };
+                    var sfx = new Dictionary<string, object> { { "text", what }, { "loop", loop } };
                     if (seconds > 0.4f) sfx["seconds"] = Math.Round(seconds, 1);
                     return ("sound_effect", sfx);
                 case Recipe.VoiceLine: return ("voice_line", new Dictionary<string, object> { { "text", what }, { "voice", _voices[voiceIndex].id } });
-                default: return ("make_music", new Dictionary<string, object> { { "style", what }, { "seconds", Math.Round(seconds) } });
+                default: return ("make_music", new Dictionary<string, object> { { "prompt", what }, { "seconds", Math.Round(seconds) } });
+            }
+        }
+
+        // Hawkes Gen's generate_image takes a shape (square 1024x1024, wide 1344x768, tall 768x1344,
+        // landscape 1216x832, portrait 832x1216), not a ratio: each ratio here goes to the nearest one.
+        static string ShapeOf(string aspect)
+        {
+            switch (aspect)
+            {
+                case "16:9": return "wide";
+                case "9:16": return "tall";
+                case "4:3": case "3:2": return "landscape";
+                case "3:4": case "2:3": return "portrait";
+                default: return "square";
             }
         }
 

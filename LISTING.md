@@ -10,9 +10,9 @@
 Keep the disclosure at the very top (Submission Guidelines 1.4 and 1.5.c).
 
 > **Requires a Hawkes Gen account and credits.** Generation runs on Hawkes Gen's online service, paid with credits
-> (1 credit = US$0.01) bought at hawkesgen.com. New accounts get 50 free credits. Typical costs: an image ~5 credits, a
+> (1 credit = US$0.01) bought at hawkesgen.ai. New accounts get 50 free credits. Typical costs: an image ~5 credits, a
 > sound ~8, a tileable material ~10, an animated sprite sheet ~50. Every job is priced before it runs; failed jobs are
-> refunded. Terms: hawkesgen.com/terms · Privacy: hawkesgen.com/privacy.
+> refunded. Terms: hawkesgen.ai/legal#terms · Privacy: hawkesgen.ai/legal#privacy.
 
 Make game assets from a prompt without leaving Unity.
 
@@ -24,12 +24,12 @@ Make game assets from a prompt without leaving Unity.
 - **Skyboxes** as Skybox/Panoramic Materials.
 - **Sound effects, voice lines and music**, imported as AudioClips.
 
-Sign in once with your browser (no keys to paste) and set a daily spending limit for the editor. A progress bar shows each
+Sign in once with your browser (no keys to paste). A progress bar shows each
 step, your place in line and the time left. Results are saved into your project and selected for you.
 
 The same account works from Claude Code, Cursor and VS Code through Hawkes Gen's MCP server.
 
-**Requirements:** an internet connection and a hawkesgen.com account. Optional: the 2D Sprite package for automatic slicing.
+**Requirements:** an internet connection and a hawkesgen.ai account. Optional: the 2D Sprite package for automatic slicing.
 **Privacy:** only your prompts and the images you choose are sent. Sign-in tokens are stored in EditorPrefs on your
 computer, never in your project or builds. No analytics.
 

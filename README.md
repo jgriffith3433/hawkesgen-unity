@@ -1,9 +1,9 @@
 # Hawkes Gen for Unity
 
-A Unity Editor extension for [Hawkes Gen](https://hawkesgen.com). It makes sprites, animated sprite sheets (sliced, with an
+A Unity Editor extension for [Hawkes Gen](https://hawkesgen.ai). It makes sprites, animated sprite sheets (sliced, with an
 AnimationClip), tileable PBR materials, skyboxes, sound effects, voice lines and music from a prompt, and edits images you
 already have, without leaving the editor. It talks to the same MCP server as Claude Code, Cursor and VS Code
-(`https://hawkesgen.com/mcp`), with the same browser sign-in.
+(`https://hawkesgen.ai/mcp`), with the same browser sign-in.
 
 - **The package:** `Assets/HawkesGen/` (all that ships). Window > Hawkes Gen. Docs: `Assets/HawkesGen/Documentation/Hawkes Gen Documentation.pdf` (printed from `Docs/HawkesGen-Documentation.html` with Chrome headless; edit the HTML, then reprint).
 - **This repo** is the Unity project it's built and uploaded from (Unity 6000.3.7f1; the package supports 2022.3+). It has the
@@ -22,12 +22,20 @@ already have, without leaving the editor. It talks to the same MCP server as Cla
 
 ## Test
 
-A test account's session cookie approves the sign-in, and a green-screen clip feeds the sprite-sheet step:
+`.github/workflows/check.yml` runs on every push, with no laptop step:
+- **Documentation PDF:** printed from `Docs/HawkesGen-Documentation.html` with Chrome headless; on a branch, when the HTML
+  is newer than the PDF, the reprint is committed to the branch.
+- **Unity:** the project compiled in `unityci/editor:ubuntu-6000.3.7f1` (no errors, no warnings in `Assets/HawkesGen`),
+  licensed with the repo secrets `UNITY_EMAIL` and `UNITY_PASSWORD` (a Personal seat, returned after; `UNITY_SERIAL` for
+  Plus/Pro). Without them the job warns and skips.
+- **Smoke test** (Actions > Check > Run workflow, "smoke"): signs in through the real loopback flow as beta Gen's test
+  account (the run's own GitHub OIDC token makes the session, no secret), uploads the sample, removes its
+  background and makes pixel art, against https://beta.hawkesgen.ai (a few credits). "sprite" also makes a sprite sheet
+  (a GPU clip).
+
+By hand on Linux with Unity: `bash DevTools/ci/unity.sh compile` or `smoke` (same environment variables). Or in the editor:
 
 ```bash
 # copy DevTools/ into Assets/_Dev/Editor/ first
-HG_COOKIE='hg_session=...' HG_VIDEO=/path/to/clip.mp4 Unity -batchmode -projectPath . -executeMethod HawkesGen.DevTests.HawkesGenSmokeTest.Run -logFile -
+HG_COOKIE='hg_session=...' HG_SERVER=https://hawkesgen.ai Unity -batchmode -projectPath . -executeMethod HawkesGen.DevTests.HawkesGenSmokeTest.Run -logFile -
 ```
-
-It signs in through the real loopback flow, uploads the sample, removes its background, makes pixel art, and turns a clip
-into a sliced sheet with an AnimationClip, against hawkesgen.com (about 6 credits).

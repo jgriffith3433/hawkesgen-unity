@@ -320,12 +320,12 @@ TextMesh:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1493970963}
   m_Text: "1. Open Window > Hawkes Gen.\n2. Click \"Sign in with your browser\" and
-    approve\n    Unity Editor on hawkesgen.com.\n3. Select Samples/Knight.png in
+    approve\n    Unity Editor on hawkesgen.ai.\n3. Select Samples/Knight.png in
     the Project window.\n4. Choose \"Animated sprite sheet\", type a motion\n   
     (\"walking in place, a looping walk cycle\"),\n    and click Generate.\n5. The
     sheet arrives in Assets/Hawkes Gen Output,\n    sliced, with an AnimationClip:
     drag the clip\n    onto this sprite and press Play.\n\nUses credits from your
-    hawkesgen.com account.\nSee Documentation/Hawkes Gen Documentation.pdf."
+    hawkesgen.ai account.\nSee Documentation/Hawkes Gen Documentation.pdf."
   m_OffsetZ: 0
   m_CharacterSize: 0.065
   m_LineSpacing: 1
