@@ -6,8 +6,9 @@
 # License: UNITY_EMAIL + UNITY_PASSWORD (a Personal seat, through the Unity Licensing Client inside the editor, returned
 # at the end), or with UNITY_SERIAL a Plus/Pro serial. The same way Hawkes Gen's Unity builds activate
 # (hawkesgen server/unity-cloudrun/entrypoint.sh). Never echoes the secrets.
-# Smoke: HG_SERVER (default https://beta.hawkesgen.ai), and HG_COOKIE (a session cookie) or HG_TEST_SIGNIN (that Gen's
-# test sign-in secret, tss_...: a session is made for its test account); HG_SPRITE=1 also makes a sprite sheet.
+# Smoke: HG_SERVER (default https://beta.hawkesgen.ai). In GitHub Actions (permissions id-token: write) the run's own OIDC
+# token signs in this repo's test account on beta Gen (POST /v1/users/test-session/github): no secret. Elsewhere,
+# HG_COOKIE (a session cookie) or HG_TEST_SIGNIN (that Gen's tss_ secret). HG_SPRITE=1 also makes a sprite sheet.
 set -uo pipefail
 MODE="${1:-compile}"
 UNITY="${UNITY_BIN:-unity-editor}"
@@ -79,11 +80,22 @@ test_cookie() {
   awk '$6 == "hg_session" { print "hg_session=" $7 }' "$OUT/jar"
 }
 
+github_cookie() {
+  local server="$1" oidc
+  oidc=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=hawkesgen-test-signin" | sed -n 's/.*"value":"\([^"]*\)".*/\1/p')
+  [ -n "$oidc" ] || return 1
+  echo "::add-mask::$oidc" >&2
+  curl -fsS -c "$OUT/jar" -H 'Content-Type: application/json' -o /dev/null -d "{\"token\":\"$oidc\"}" "$server/v1/users/test-session/github" || return 1
+  awk '$6 == "hg_session" { print "hg_session=" $7 }' "$OUT/jar"
+}
+
 smoke() {
   export HG_SERVER="${HG_SERVER:-https://beta.hawkesgen.ai}"
   if [ -z "${HG_COOKIE:-}" ]; then
-    [ -n "${HG_TEST_SIGNIN:-}" ] || { echo "Smoke test needs HG_COOKIE or HG_TEST_SIGNIN"; return 1; }
-    HG_COOKIE=$(test_cookie "$HG_SERVER") && [ -n "$HG_COOKIE" ] || { echo "Couldn't make a test session on $HG_SERVER"; return 1; }
+    if [ -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ]; then HG_COOKIE=$(github_cookie "$HG_SERVER")
+    elif [ -n "${HG_TEST_SIGNIN:-}" ]; then HG_COOKIE=$(test_cookie "$HG_SERVER")
+    else echo "Smoke test needs GitHub Actions (id-token: write), HG_COOKIE or HG_TEST_SIGNIN"; return 1; fi
+    [ -n "$HG_COOKIE" ] || { echo "Couldn't make a test session on $HG_SERVER"; return 1; }
     echo "::add-mask::${HG_COOKIE#hg_session=}"
     export HG_COOKIE
   fi

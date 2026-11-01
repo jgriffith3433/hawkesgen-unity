@@ -29,7 +29,7 @@ already have, without leaving the editor. It talks to the same MCP server as Cla
   licensed with the repo secrets `UNITY_EMAIL` and `UNITY_PASSWORD` (a Personal seat, returned after; `UNITY_SERIAL` for
   Plus/Pro). Without them the job warns and skips.
 - **Smoke test** (Actions > Check > Run workflow, "smoke"): signs in through the real loopback flow as beta Gen's test
-  account (secret `HG_TEST_SIGNIN`, beta Gen's test sign-in secret; or `HG_COOKIE`), uploads the sample, removes its
+  account (the run's own GitHub OIDC token makes the session, no secret), uploads the sample, removes its
   background and makes pixel art, against https://beta.hawkesgen.ai (a few credits). "sprite" also makes a sprite sheet
   (a GPU clip).
 

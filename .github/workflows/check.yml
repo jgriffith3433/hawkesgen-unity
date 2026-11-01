@@ -2,7 +2,7 @@
 # project compiled in Unity (no errors, no warnings in Assets/HawkesGen), and on request the live smoke test.
 # Secrets (repo settings, each optional; a job without its secrets says so and skips):
 #   UNITY_EMAIL, UNITY_PASSWORD (+ UNITY_SERIAL for Plus/Pro): the Unity account Hawkes Gen's Unity builds use
-#   HG_TEST_SIGNIN: beta Gen's test sign-in secret (tss_...), for the smoke test's test account; or HG_COOKIE
+# The smoke test needs no secret: the run's GitHub OIDC token signs in this repo's test account on beta Gen.
 name: Check
 on:
   push:
@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write # the smoke test signs in to beta Gen with the run's own GitHub OIDC token, no secret
 
 concurrency:
   group: check-${{ github.ref }}
@@ -69,8 +70,6 @@ jobs:
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-      HG_TEST_SIGNIN: ${{ secrets.HG_TEST_SIGNIN }}
-      HG_COOKIE: ${{ secrets.HG_COOKIE }}
       HG_SPRITE: ${{ inputs.sprite && '1' || '0' }}
     steps:
       - uses: actions/checkout@v4
