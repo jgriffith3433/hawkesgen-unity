@@ -7,3 +7,4 @@ compile, use them, then delete `Assets/_Dev` again before validating or uploadin
 - `HawkesGenExport.cs`: exports `Assets/HawkesGen` as a `.unitypackage` (a direct download).
 - `HawkesGenDemoScene.cs`: rebuilds `Samples/Hawkes Gen Demo.unity` (Tools > Hawkes Gen (dev) > Build Demo Scene).
 - `make_unitypackage.py`: builds the same `.unitypackage` without Unity (it can stay open): `python DevTools/make_unitypackage.py ../hawkesgenwebsite/public/downloads/HawkesGen.unitypackage`
+- `ci/unity.sh`: the compile check and smoke test in batch mode, for `.github/workflows/check.yml` (Linux, Unity licensed from the environment).

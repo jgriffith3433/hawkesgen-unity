@@ -22,12 +22,20 @@ already have, without leaving the editor. It talks to the same MCP server as Cla
 
 ## Test
 
-A test account's session cookie approves the sign-in, and a green-screen clip feeds the sprite-sheet step:
+`.github/workflows/check.yml` runs on every push, with no laptop step:
+- **Documentation PDF:** printed from `Docs/HawkesGen-Documentation.html` with Chrome headless; on a branch, when the HTML
+  is newer than the PDF, the reprint is committed to the branch.
+- **Unity:** the project compiled in `unityci/editor:ubuntu-6000.3.7f1` (no errors, no warnings in `Assets/HawkesGen`),
+  licensed with the repo secrets `UNITY_EMAIL` and `UNITY_PASSWORD` (a Personal seat, returned after; `UNITY_SERIAL` for
+  Plus/Pro). Without them the job warns and skips.
+- **Smoke test** (Actions > Check > Run workflow, "smoke"): signs in through the real loopback flow as beta Gen's test
+  account (secret `HG_TEST_SIGNIN`, beta Gen's test sign-in secret; or `HG_COOKIE`), uploads the sample, removes its
+  background and makes pixel art, against https://beta.hawkesgen.ai (a few credits). "sprite" also makes a sprite sheet
+  (a GPU clip).
+
+By hand on Linux with Unity: `bash DevTools/ci/unity.sh compile` or `smoke` (same environment variables). Or in the editor:
 
 ```bash
 # copy DevTools/ into Assets/_Dev/Editor/ first
-HG_COOKIE='hg_session=...' HG_VIDEO=/path/to/clip.mp4 Unity -batchmode -projectPath . -executeMethod HawkesGen.DevTests.HawkesGenSmokeTest.Run -logFile -
+HG_COOKIE='hg_session=...' HG_SERVER=https://hawkesgen.ai Unity -batchmode -projectPath . -executeMethod HawkesGen.DevTests.HawkesGenSmokeTest.Run -logFile -
 ```
-
-It signs in through the real loopback flow, uploads the sample, removes its background, makes pixel art, and turns a clip
-into a sliced sheet with an AnimationClip, against hawkesgen.ai (about 6 credits).
